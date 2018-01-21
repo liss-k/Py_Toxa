@@ -1,1 +1,6 @@
 *.ppk
+*.txt
+test.py
+settings.py
+/резерв/
+*.log

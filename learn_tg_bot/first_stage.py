@@ -9,8 +9,8 @@ def firstStage(bot, update, reload_mark):
     global CHAT_STAGE_DIC
 
     try:
-        CHAT_STAGE_DIC[chat_id]
         print(CHAT_STAGE_DIC)        
+        CHAT_STAGE_DIC[chat_id]
     except (KeyError, NameError):
         CHAT_STAGE_DIC={chat_id:{'chat_stage':0,'is_angry':False,'all_msg_counter':0,'stage_msg_counter':0, 'know_about':False}}
     print(CHAT_STAGE_DIC)

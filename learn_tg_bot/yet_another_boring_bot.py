@@ -15,10 +15,10 @@ logging.basicConfig(format='%(name)s-%(asctime)s-%(levelname)s-%(message)s',
 # message - что произошло (задаем сами)
 # ----------------------------
 
-global game_dic, party_dic
+global game_dic, party_dic, USER_DIC
 # excep_dic={"лена":"Мой бомбический создатель!", "тесла":"Будет расти", "тоха":"Ээээх", 
 # 	       "ира":"Злобоглазый профессионал...", "надя":"Почетная бросальщица ","юля":"Гоу по кальяну?"}
-
+USER_DIC={}
 game_dic={}
 party_dic={}
 
@@ -46,14 +46,14 @@ def startBot(bot, update):
 	global GAME_STAGE, USER_DIC
 	try:
 		GAME_STAGE[chat_id]='first_stage'
-	except:
+	except (KeyError, NameError):
 		GAME_STAGE={}
 		GAME_STAGE[chat_id]='first_stage'		
 	try:
 		USER_DIC[chat_id]['all_msg_counter']+=1
 		USER_DIC[chat_id]['in_try_msg_counter']=0
 	except (KeyError, NameError):
-		USER_DIC={}
+		
 		USER_DIC[chat_id]={'all_msg_counter':0,'in_try_msg_counter':0}
 	USER_DIC[chat_id]['is_angry_vic']=False
 	bot_answer='https://media.giphy.com/media/l4pTjmrL1LKiYrHDW/giphy.gif'

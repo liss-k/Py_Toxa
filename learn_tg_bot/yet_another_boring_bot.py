@@ -26,7 +26,7 @@ def startBot(bot, update):
 
 	logging.info("User {} (username {}) has pressed the button /start".format(update.message.chat.first_name, update.message.chat.username))
 	chat_id=update.message.chat.id
-	if str(chat_id) not in ['328203998','543317664']:
+	if str(chat_id) not in ['328203998','192204203']:
 		return update.message.reply_text('Я ещё не готова')
 
 	first_name=update.message.chat.first_name

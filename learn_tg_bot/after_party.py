@@ -23,7 +23,7 @@ def callback_minute(bot, job):
                         4:[['Бывает, просто молчишь, а тебя уже неправильно поняли((']],
                         }
     job.context['msg_counter']+=1
-    job.interval=random.randint(5,6)
+    job.interval=random.randint(25,35)
 
     answer_list=miss_u_dic[job.context['msg_counter']]
     bot_answer=answer_list[random.randint(0,len(answer_list)-1)]
@@ -91,5 +91,5 @@ def afterParty(bot,update,job_queue):
             print(attempt_dic[chat_id]['job'])
         except (KeyError):
             pass
-        j=job_queue.run_repeating(callback_minute, 5, context=user_dic)
+        j=job_queue.run_repeating(callback_minute, 20, context=user_dic)
         return 'after_party'

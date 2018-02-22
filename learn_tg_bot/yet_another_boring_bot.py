@@ -26,7 +26,7 @@ def startBot(bot, update):
 
 	logging.info("User {} (username {}) has pressed the button /start".format(update.message.chat.first_name, update.message.chat.username))
 	chat_id=update.message.chat.id
-	if str(chat_id)!='328203998':
+	if str(chat_id) not in ['328203998','543317664']:
 		return update.message.reply_text('Я ещё не готова')
 
 	first_name=update.message.chat.first_name
@@ -40,7 +40,7 @@ def startBot(bot, update):
 	""".format(first_name)
 	bot.send_message(chat_id=chat_id, text=hello_text)
 
-	hello_text="""Я повторю это еще раз и капслоком: будь ВНИМАТЕЛЕН... она та ещё стерва"""
+	hello_text="""Я повторю это еще раз и капслоком: будь ВНИМАТЕЛЕН"""
 	bot.send_message(chat_id=chat_id, text=hello_text)
 	
 	global GAME_STAGE, USER_DIC
@@ -93,17 +93,17 @@ def chatParametrs(bot,update,job_queue):
 	#328203998
 	#232455503 - Ира
 #272424273 - Надя
-	if str(chat_id)=='328203998' and GAME_STAGE[chat_id]=='first_stage':
+	if GAME_STAGE[chat_id]=='first_stage':
 		GAME_STAGE[chat_id]=first_stage.firstStage(bot,update,reload_mark)
 		# if GAME_STAGE[chat_id]=='champagne_game':
 		# 	GAME_STAGE[chat_id]=IIII_game_tg.champagneGame(bot,update)
-	elif (str(chat_id)=='328203998' or str(chat_id)=='543317664')  and GAME_STAGE[chat_id]=='champagne_game':
+	elif GAME_STAGE[chat_id]=='champagne_game':
 		GAME_STAGE[chat_id]=IIII_game_tg.champagneGame(bot,update)
-	elif (str(chat_id)=='328203998' or str(chat_id)=='543317664') and GAME_STAGE[chat_id]=='after_party':
+	elif GAME_STAGE[chat_id]=='after_party':
 		GAME_STAGE[chat_id]=after_party.afterParty(bot,update,job_queue)
 		if GAME_STAGE[chat_id]=='angry_stage':
 			GAME_STAGE[chat_id]=angry_stage.angryStage(bot,update)
-	elif (str(chat_id)=='328203998' or str(chat_id)=='543317664') and GAME_STAGE[chat_id]=='angry_stage':
+	elif GAME_STAGE[chat_id]=='angry_stage':
 		GAME_STAGE[chat_id]=angry_stage.angryStage(bot,update)
 
 def chatSticker(bot,update):

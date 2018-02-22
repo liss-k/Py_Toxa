@@ -54,6 +54,7 @@ def angryStage(bot,update):
                 if ANGRY_STAGE_DIC[chat_id]['know_rules']==True:
                     if ANGRY_STAGE_DIC[chat_id]['score']==4:
                         bot_answer2='Ты победитель, ботов укротитель!!!!!'
+                        bot_answer3='https://www.youtube.com/watch?v=YDPR5EoYqOs'
                     else:
                         bot_answer2='Еще {} и Виктория посыпется'.format(4-ANGRY_STAGE_DIC[chat_id]['score'])
     
@@ -84,6 +85,11 @@ def angryStage(bot,update):
         bot.send_message(chat_id=chat_id, text=bot_answer, reply_markup=reply_markup)
         try:
             bot.send_message(chat_id=chat_id, text=bot_answer2)
+        except (UnboundLocalError):
+            pass
+
+        try:
+            bot.send_document(chat_id, bot_answer3)
         except (UnboundLocalError):
             pass
 

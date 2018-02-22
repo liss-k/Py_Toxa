@@ -2,9 +2,6 @@ import time, settings, random, angry_stage
 from telegram.ext import Updater
 from telegram import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 
-global attempt_dic
-attempt_dic={}
-
 def callback_minute(bot, job):
     chat_id=job.context['chat_id']
     global attempt_dic
@@ -23,7 +20,7 @@ def callback_minute(bot, job):
                         4:[['Бывает, просто молчишь, а тебя уже неправильно поняли((']],
                         }
     job.context['msg_counter']+=1
-    job.interval=random.randint(25,35)
+    job.interval=random.randint(15,25)
 
     answer_list=miss_u_dic[job.context['msg_counter']]
     bot_answer=answer_list[random.randint(0,len(answer_list)-1)]
@@ -57,7 +54,8 @@ def afterParty(bot,update,job_queue):
     global attempt_dic
     try:
         attempt_dic[chat_id]['message_id']=update.message.message_id
-    except (KeyError):
+    except (KeyError, NameError):
+        attempt_dic={}
         attempt_dic[chat_id]={'message_id':update.message.message_id, 'msg_counter':0}
     
     if attempt_dic[chat_id]['msg_counter']==4 and text=='Бывает, просто молчишь, а тебя уже неправильно поняли((':
@@ -84,12 +82,14 @@ def afterParty(bot,update,job_queue):
         user_dic['message_id']=message_id    
         user_dic['msg_counter']=0
         user_dic['job_queue']=job_queue
-        print (user_dic)
         try:
             attempt_dic[chat_id]['job'].schedule_removal()
             print('in_try')
             print(attempt_dic[chat_id]['job'])
         except (KeyError):
-            pass
-        j=job_queue.run_repeating(callback_minute, 20, context=user_dic)
+            print('in_ex')
+            print(attempt_dic)
+        j=job_queue.run_repeating(callback_minute, interval=15, first=15, context=user_dic)
+        attempt_dic[chat_id]['job']=j
+        print(j)
         return 'after_party'

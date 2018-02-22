@@ -69,6 +69,7 @@ def chatParametrs(bot,update,job_queue):
 	chat_id=update.message.chat.id
 	first_name=update.message.chat.first_name
 	username=update.message.chat.username
+
 	logging.info("{} (username {}) has written {}".format(first_name, username, text))
 	print(chat_id)
 	global USER_DIC, GAME_STAGE

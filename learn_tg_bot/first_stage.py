@@ -11,7 +11,7 @@ def firstStage(bot, update, reload_mark):
         CHAT_STAGE_DIC[chat_id]
     except (KeyError, NameError):
         CHAT_STAGE_DIC={chat_id:{'chat_stage':0,'is_angry':False,'all_msg_counter':0,'stage_msg_counter':0, 'know_about':False}}
-
+    print(CHAT_STAGE_DIC)
     if reload_mark==True:
         CHAT_STAGE_DIC[chat_id]['is_angry']=False
         CHAT_STAGE_DIC[chat_id]['stage_msg_counter']=0    

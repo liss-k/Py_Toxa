@@ -7,6 +7,7 @@ def firstStage(bot, update, reload_mark):
     text=update.message.text
 
     global CHAT_STAGE_DIC
+    print(CHAT_STAGE_DIC)
     try:
         CHAT_STAGE_DIC[chat_id]
     except (KeyError, NameError):

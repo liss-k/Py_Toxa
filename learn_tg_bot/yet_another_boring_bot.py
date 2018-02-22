@@ -66,6 +66,8 @@ def startBot(bot, update):
 	custom_keyboard=[['Давай','Ну, нафиг!']]
 	reply_markup = ReplyKeyboardMarkup(custom_keyboard, resize_keyboard=True, one_time_keyboard=False)
 	bot.send_message(chat_id=chat_id, text=bot_answer, reply_markup=reply_markup)
+	print(GAME_STAGE)
+	print(USER_DIC)
 
 def chatParametrs(bot,update,job_queue):
 	text=update.message.text

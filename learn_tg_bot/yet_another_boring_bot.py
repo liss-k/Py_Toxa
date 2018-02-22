@@ -44,8 +44,11 @@ def startBot(bot, update):
 	bot.send_message(chat_id=chat_id, text=hello_text)
 	
 	global GAME_STAGE, USER_DIC
-	GAME_STAGE={}
-	GAME_STAGE[chat_id]='first_stage'
+	try:
+		GAME_STAGE[chat_id]='first_stage'
+	except:
+		GAME_STAGE={}
+		GAME_STAGE[chat_id]='first_stage'		
 	try:
 		USER_DIC[chat_id]['all_msg_counter']+=1
 		USER_DIC[chat_id]['in_try_msg_counter']=0

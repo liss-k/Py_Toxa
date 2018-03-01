@@ -46,11 +46,11 @@ def startBot(bot, update):
 	bot.send_message(chat_id=chat_id, text=hello_text)
 	
 	try:
-		USER_DIC[chat_id]['game_stage']={'stage_name':'angry_stage'}
+		USER_DIC[chat_id]['game_stage']={'stage_name':'first_stage'}
 		USER_DIC[chat_id]['all_msg_counter']+=1
 		USER_DIC[chat_id]['in_try_msg_counter']=0
 	except (KeyError, NameError):
-		USER_DIC[chat_id]={'all_msg_counter':0,'in_try_msg_counter':0,'game_stage':{'stage_name':'angry_stage'}}
+		USER_DIC[chat_id]={'all_msg_counter':0,'in_try_msg_counter':0,'game_stage':{'stage_name':'first_stage'}}
 	
 	USER_DIC[chat_id]['is_angry_vic']=False
 	bot_answer='https://media.giphy.com/media/l4pTjmrL1LKiYrHDW/giphy.gif'

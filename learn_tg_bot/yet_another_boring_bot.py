@@ -1,4 +1,4 @@
-import settings, random, time
+import settings, random, time, re
 import first_stage, IIII_game_tg, after_party, angry_stage
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
@@ -15,19 +15,21 @@ logging.basicConfig(format='%(name)s-%(asctime)s-%(levelname)s-%(message)s',
 # message - что произошло (задаем сами)
 # ----------------------------
 
-global game_dic, party_dic, USER_DIC
-# excep_dic={"лена":"Мой бомбический создатель!", "тесла":"Будет расти", "тоха":"Ээээх", 
-# 	       "ира":"Злобоглазый профессионал...", "надя":"Почетная бросальщица ","юля":"Гоу по кальяну?"}
+global USER_DIC
 USER_DIC={}
-game_dic={}
-party_dic={}
+
 
 def startBot(bot, update):
+	global USER_DIC
+	chat_id=update.message.chat.id
 
+	try:
+		USER_DIC[chat_id]['game_stage']['job'].schedule_removal()
+	except (KeyError, NameError):
+		pass
 	logging.info("User {} (username {}) has pressed the button /start".format(update.message.chat.first_name, update.message.chat.username))
 	chat_id=update.message.chat.id
-	if str(chat_id) not in ['328203998','192204203']:
-		return update.message.reply_text('Я ещё не готова')
+	print(chat_id)
 
 	first_name=update.message.chat.first_name
 	if first_name==None or first_name=='None':
@@ -43,18 +45,13 @@ def startBot(bot, update):
 	hello_text="""Я повторю это еще раз и капслоком: будь ВНИМАТЕЛЕН"""
 	bot.send_message(chat_id=chat_id, text=hello_text)
 	
-	global GAME_STAGE, USER_DIC
 	try:
-		GAME_STAGE[chat_id]='first_stage'
-	except (KeyError, NameError):
-		GAME_STAGE={}
-		GAME_STAGE[chat_id]='first_stage'		
-	try:
+		USER_DIC[chat_id]['game_stage']={'stage_name':'angry_stage'}
 		USER_DIC[chat_id]['all_msg_counter']+=1
 		USER_DIC[chat_id]['in_try_msg_counter']=0
 	except (KeyError, NameError):
-		
-		USER_DIC[chat_id]={'all_msg_counter':0,'in_try_msg_counter':0}
+		USER_DIC[chat_id]={'all_msg_counter':0,'in_try_msg_counter':0,'game_stage':{'stage_name':'angry_stage'}}
+	
 	USER_DIC[chat_id]['is_angry_vic']=False
 	bot_answer='https://media.giphy.com/media/l4pTjmrL1LKiYrHDW/giphy.gif'
 	bot.send_document(chat_id, bot_answer)
@@ -67,15 +64,17 @@ def startBot(bot, update):
 	reply_markup = ReplyKeyboardMarkup(custom_keyboard, resize_keyboard=True, one_time_keyboard=False)
 	bot.send_message(chat_id=chat_id, text=bot_answer, reply_markup=reply_markup)
 
+
 def chatParametrs(bot,update,job_queue):
 	text=update.message.text
 	chat_id=update.message.chat.id
 	first_name=update.message.chat.first_name
 	username=update.message.chat.username
 
-	logging.info("{} (username {}) has written {}".format(first_name, username, text))
-	print(chat_id)
-	global USER_DIC, GAME_STAGE
+	logging.info("{} (username {}) has written {}".format(first_name, username, re.sub(r'[^\w\s]', '', text)))
+
+	
+	global USER_DIC
 	USER_DIC[chat_id]['all_msg_counter']+=1
 	USER_DIC[chat_id]['in_try_msg_counter']+=1
 	if USER_DIC[chat_id]['in_try_msg_counter']==1:
@@ -84,31 +83,29 @@ def chatParametrs(bot,update,job_queue):
 		reload_mark=False
 
 	try:
-		GAME_STAGE[chat_id]
+		USER_DIC[chat_id]['game_stage']
 	except KeyError:
-		stage_list=['first_stage','pre_party','champagne_game','after_party','angry_stage']
-	#=================================== temporary ==============================================
-		the_stage=stage_list[3]
-		GAME_STAGE[chat_id]=the_stage
-		print(GAME_STAGE[chat_id])
-	#=============================================================================================
-	print(GAME_STAGE[chat_id])
-	# or str(chat_id)=='63818817' - Рита Волкова
-	#328203998
-	#232455503 - Ира
-#272424273 - Надя
-	if GAME_STAGE[chat_id]=='first_stage':
-		GAME_STAGE[chat_id]=first_stage.firstStage(bot,update,reload_mark)
-		# if GAME_STAGE[chat_id]=='champagne_game':
-		# 	GAME_STAGE[chat_id]=IIII_game_tg.champagneGame(bot,update)
-	elif GAME_STAGE[chat_id]=='champagne_game':
-		GAME_STAGE[chat_id]=IIII_game_tg.champagneGame(bot,update)
-	elif GAME_STAGE[chat_id]=='after_party':
-		GAME_STAGE[chat_id]=after_party.afterParty(bot,update,job_queue)
-		if GAME_STAGE[chat_id]=='angry_stage':
-			GAME_STAGE[chat_id]=angry_stage.angryStage(bot,update)
-	elif GAME_STAGE[chat_id]=='angry_stage':
-		GAME_STAGE[chat_id]=angry_stage.angryStage(bot,update)
+		bot_answer='Что-то пошло не так, нажми /start'
+		return bot.send_message(chat_id=chat_id, text=bot_answer, reply_markup=reply_markup)
+
+	game_stage_dic=USER_DIC[chat_id]['game_stage']
+
+	if game_stage_dic['stage_name']=='first_stage':
+		game_stage_dic=first_stage.firstStage(bot,update,reload_mark,game_stage_dic)
+	
+	elif game_stage_dic['stage_name']=='champagne_game':
+		game_stage_dic=IIII_game_tg.champagneGame(bot,update,game_stage_dic)
+	
+	elif game_stage_dic['stage_name']=='after_party':
+		game_stage_dic=after_party.afterParty(bot,update,job_queue,game_stage_dic)
+		if game_stage_dic['stage_name']=='angry_stage':
+			game_stage_dic=angry_stage.angryStage(bot,update,game_stage_dic)
+	
+	elif game_stage_dic['stage_name']=='angry_stage' or game_stage_dic['stage_name']=='final_stage':
+		game_stage_dic=angry_stage.angryStage(bot,update,game_stage_dic)
+
+	USER_DIC[chat_id]['game_stage']=game_stage_dic
+
 
 def chatSticker(bot,update):
 	text=update.message.text

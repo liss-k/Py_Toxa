@@ -2,17 +2,19 @@ import random
 from telegram import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 # -*- coding: UTF-8 -*-
 
-def angryStage(bot,update):
+def angryStage(bot,update,game_stage_dic):
     text=update.message.text
     chat_id=update.message.chat.id
     if text=='Бывает, просто молчишь, а тебя уже неправильно поняли((':
-        return 'angry_stage'
+        return {'stage_name':'angry_stage'}
+    print (game_stage_dic)
+    if game_stage_dic['stage_name']=='final_stage':
+        return finalStage(bot,update,game_stage_dic)
 
-    global ANGRY_STAGE_DIC
     try:
-        ANGRY_STAGE_DIC[chat_id]['msg_counter']+=1
+        game_stage_dic['msg_counter']+=1
     except (KeyError, NameError, UnboundLocalError):
-        ANGRY_STAGE_DIC={chat_id:{'msg_counter':0, 'score':0, 'used_list':[], 'know_rules':False}}
+        game_stage_dic={'msg_counter':0, 'score':0, 'used_list':[], 'know_rules':False}
 
     good_gift_dic={('🎁'):'Твои подарки делают меня счастливой! А на прыгающую от счастья женщину можно смотреть бесконечно...)',
                 ('💍','💎'):'Мощно! И даже драматично!) Спасибо, милый!💖',
@@ -44,31 +46,32 @@ def angryStage(bot,update):
 
     for key in good_gift_dic.keys():
         if text in key:
-            if text in ANGRY_STAGE_DIC[chat_id]['used_list']:
+            if text in game_stage_dic['used_list']:
                 bot_answer='Что-то похожее уже было...А я во всем люблю разнообразие'
             else:
-                
                 bot_answer=good_gift_dic[key]
-                ANGRY_STAGE_DIC[chat_id]['score']+=1
-                ANGRY_STAGE_DIC[chat_id]['used_list'].extend(key)
-                if ANGRY_STAGE_DIC[chat_id]['know_rules']==True:
-                    if ANGRY_STAGE_DIC[chat_id]['score']==4:
-                        bot_answer2='Ты победитель, ботов укротитель!!!!!'
-                        bot_answer3='https://www.youtube.com/watch?v=YDPR5EoYqOs'
+
+                game_stage_dic['score']+=1
+                game_stage_dic['used_list'].extend(key)
+                if game_stage_dic['score']==4:
+                    return finalStage(bot,update,game_stage_dic)
+                else:
+                    if game_stage_dic['score']==3:
+                        present='подарок'
                     else:
-                        bot_answer2='Еще {} и Виктория посыпется'.format(4-ANGRY_STAGE_DIC[chat_id]['score'])
-    
+                        present='подарка'
+                    bot_answer2='Еще {} {} и Виктория посыпется'.format(4-game_stage_dic['score'],present)
+
 
     for key in bad_gift_dic.keys():
         if text in key:
-            if text in ANGRY_STAGE_DIC[chat_id]['used_list']:
+            if text in game_stage_dic['used_list']:
                 bot_answer='Что-то такое уже было...И нет, ни со второго, ни с третьего раза это не прокатит))'
             else:
                 bot_answer=bad_gift_dic[key]
-                ANGRY_STAGE_DIC[chat_id]['used_list'].extend(bad_gift_dic[key])
-                ANGRY_STAGE_DIC[chat_id]['used_list'].extend(key)
+                game_stage_dic['used_list'].extend(key)
 
-    if ANGRY_STAGE_DIC[chat_id]['msg_counter']>1 and ANGRY_STAGE_DIC[chat_id]['know_rules']==False:
+    if game_stage_dic['msg_counter']>1 and game_stage_dic['know_rules']==False:
         custom_keyboard=[['Я не понимаю, что мне делать???']]
         reply_markup = ReplyKeyboardMarkup(custom_keyboard, resize_keyboard=True, one_time_keyboard=False)
     else:
@@ -80,22 +83,13 @@ def angryStage(bot,update):
             bot.send_document(chat_id, 'https://media.giphy.com/media/26gBjmGEsrFQlj8g8/giphy.gif')
         elif bot_answer=='Твои подарки делают меня счастливой! А на прыгающую от счастья женщину можно смотреть бесконечно...)':
             bot.send_document(chat_id, 'https://media.giphy.com/media/MYwekYh3UIHGE/giphy.gif')
-        elif bot_answer=='Ааааа, с ума сойти!!! Спасибо тебе!!!!':
+        elif bot_answer=='Ааааа, с ума сойти!!! Это приятнее, чем 10 фильмов со счастливым концом!':
             bot.send_document(chat_id, 'https://media.giphy.com/media/3oEhn7OTiXi4mYReyQ/giphy.gif')
         bot.send_message(chat_id=chat_id, text=bot_answer, reply_markup=reply_markup)
-        try:
-            bot.send_message(chat_id=chat_id, text=bot_answer2)
-        except (UnboundLocalError):
-            pass
-
-        try:
-            bot.send_document(chat_id, bot_answer3)
-        except (UnboundLocalError):
-            pass
 
     except (UnboundLocalError):
         if text=='Я не понимаю, что мне делать???':
-            ANGRY_STAGE_DIC[chat_id]['know_rules']=True
+            game_stage_dic['know_rules']=True
             reply_markup=ReplyKeyboardRemove()
             bot_answer='Мужчины...'
             bot.send_message(chat_id=chat_id, text=bot_answer, reply_markup=reply_markup)
@@ -107,8 +101,18 @@ def angryStage(bot,update):
             lol_answer_list=['Ты вообще умеешь угождать?','А ведь взрослый, умный мужчина...эх...','🤦‍♀️']    
             bot_answer=lol_answer_list[random.randint(0,len(lol_answer_list)-1)]  
             bot.send_message(chat_id=chat_id, text=bot_answer, reply_markup=reply_markup)
-    
-    if ANGRY_STAGE_DIC[chat_id]['score']==4:
-        return 'final_stage'
-    else:
-        return 'angry_stage'
+    try:
+        bot.send_message(chat_id=chat_id, text=bot_answer2)
+    except (UnboundLocalError):
+        pass
+
+    game_stage_dic['stage_name']='angry_stage'
+    return game_stage_dic
+
+def finalStage(bot,update,game_stage_dic):
+    text=update.message.text
+    chat_id=update.message.chat.id
+    bot.send_document(chat_id, 'https://media.giphy.com/media/2wScRSlgARKGggbIq9/giphy.gif')
+    bot.send_message(chat_id=chat_id, text='Ты победитель, ботов укротитель!!!!!')
+    game_stage_dic['stage_name']='final_stage'
+    return game_stage_dic

@@ -7,7 +7,7 @@ def angryStage(bot,update,game_stage_dic):
     chat_id=update.message.chat.id
     if text=='Бывает, просто молчишь, а тебя уже неправильно поняли((':
         return {'stage_name':'angry_stage'}
-    print (game_stage_dic)
+
     if game_stage_dic['stage_name']=='final_stage':
         return finalStage(bot,update,game_stage_dic)
 

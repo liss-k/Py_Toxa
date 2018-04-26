@@ -36,7 +36,7 @@ def startBot(bot, update):
 		first_name='Мистер Ноунейм'
 	hello_text="""Привет, {}!
 
-Классно было бы просто зайти сюда и получить свой подарок?))) Но нет, ради сомнительной награды, тебе придется погрузиться в эпос и доказать, что ты настоящий мужчина, победив в вербальной схватке Викторию.
+Погрузись в эпос и докажи всем, что ты выдающийся интеллектуал, победив в вербальной схватке Викторию!
 
 Виктория - роскошная женщина, про таких говорят "приятнее отказывают, чем она даёт". Поэтому будь внимателен и бесстрашен! Помни: ты здесь ради того, ради чего ты здесь!	
 	""".format(first_name)
@@ -46,7 +46,7 @@ def startBot(bot, update):
 	bot.send_message(chat_id=chat_id, text=hello_text)
 	
 	try:
-		USER_DIC[chat_id]['game_stage']={'stage_name':'first_stage'}
+		USER_DIC[chat_id]['game_stage']={'stage_name':'first_stage','know_about':True}
 		USER_DIC[chat_id]['all_msg_counter']+=1
 		USER_DIC[chat_id]['in_try_msg_counter']=0
 	except (KeyError, NameError):

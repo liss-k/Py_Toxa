@@ -218,7 +218,7 @@ def chatStage4 (bot, update, game_stage_dic):
         reply_markup=ReplyKeyboardRemove()
     elif game_stage_dic['stage_msg_counter']==1:
         reply_markup=ReplyKeyboardRemove()
-        bot_answer='Боже...чё мужики нифига не слушают! В самом начале же было про ВНИМАТЕЛЬНОСТЬ. Вторая попытка😈'
+        bot_answer='Боже...чё люди нифига не слушают! В самом начале же было про ВНИМАТЕЛЬНОСТЬ. Вторая попытка😈'
     elif game_stage_dic['stage_msg_counter']>=2:
         game_stage_dic['is_angry']=True
         reply_markup=ReplyKeyboardRemove()

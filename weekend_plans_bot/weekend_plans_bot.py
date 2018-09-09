@@ -21,7 +21,6 @@ from bs4 import BeautifulSoup
 
 
 def startBot(bot, update, job_queue):
-    print(update)
     chat_id=update.message.chat.id
 
     chat_id_series = pd.read_csv('bot_user_base.csv', sep='\t', encoding='utf-8', squeeze = True, header = None)
@@ -48,11 +47,9 @@ def stopBot(bot, update):
 
 
 def updatePlans(bot, job):
-    print('in job_the village')
     title_base_df = pd.read_csv('title_base.csv', sep = '\t', encoding='utf-8')
     source_list = title_base_df.iloc[:,0].tolist()
     for source in source_list:
-        print (source)
         if source == 'the_village':
             url = 'https://www.the-village.ru/village/weekend/weekend-plans/'
             main_link = 'https://www.the-village.ru'
@@ -102,12 +99,8 @@ def updatePlans(bot, job):
 
 
 def sendText(bot, last_title, last_link, main_link):
-    print('in_send_txt')
     chat_id_series = pd.read_csv('bot_user_base.csv', sep='\t', encoding='utf-8', squeeze = True, header = None)
-    print(chat_id_series)
-    print(chat_id_series.tolist(), type(chat_id_series.tolist()))
     for chat_id in chat_id_series.tolist():
-        print('in "for" cycle')
         bot.send_message(chat_id=chat_id, text="{}{}".format(main_link, last_link))
 
     

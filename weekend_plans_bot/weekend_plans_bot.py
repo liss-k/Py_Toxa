@@ -34,7 +34,7 @@ def startBot(bot, update, job_queue):
     if len(job_queue.jobs())>=1:
         pass
     else:
-        update_job = job_queue.run_repeating(updatePlans, interval=15, first=0, context = chat_id)
+        update_job = job_queue.run_repeating(updatePlans, interval=10800, first=0, context = chat_id)
 
 def stopBot(bot, update):
     chat_id = update.message.chat.id
